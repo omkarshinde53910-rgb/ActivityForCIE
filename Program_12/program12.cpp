@@ -1,0 +1,44 @@
+// Program 12: Virtual Base Class and Diamond Inheritance
+// Aim: Solve duplicate-base ambiguity in diamond inheritance using a virtual base.
+//
+//          Person (virtual base)
+//         /       |
+//     Student    Employee
+//         |       /
+//      TeachingAssistant
+#include <iostream>
+#include <string>
+#include <utility>
+
+class Person {
+protected:
+    std::string name;
+public:
+    explicit Person(std::string personName) : name(std::move(personName)) {}
+    void displayName() const {
+        std::cout << "Name: " << name << '\n';
+    }
+};
+
+class Student : virtual public Person {
+public:
+    Student() : Person("Unknown") {}
+};
+
+class Employee : virtual public Person {
+public:
+    Employee() : Person("Unknown") {}
+};
+
+class TeachingAssistant : public Student, public Employee {
+public:
+    // The most-derived class initialises the virtual base directly.
+    explicit TeachingAssistant(std::string assistantName)
+        : Person(std::move(assistantName)), Student(), Employee() {}
+};
+
+int main() {
+    TeachingAssistant assistant("Riya");
+    assistant.displayName();                // only one Person sub-object exists
+    return 0;
+}
